@@ -9,6 +9,45 @@ void getCurrentWorkingDirectory(char *buffer, size_t size)
     }
 }
 
+// malloc wrapper
+void *createMemoryAllocation(size_t size)
+{
+    void *ptr;
+
+    if (size == 0)
+    {
+        return NULL;
+    }
+    else
+    {
+        ptr = malloc(size);
+    }
+
+    if (!ptr)
+    {
+        perror("malloc failed");
+        exit(EXIT_FAILURE);
+    }
+}
+
+// realloc wrapper
+void *setMemoryAllocation(void *ptr, size_t size)
+{
+    void *newPtr;
+
+    newPtr = realloc(ptr, size);
+
+    if (!newPtr && size != 0)
+    {
+        perror("realloc failed");
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        return newPtr;
+    }
+}
+
 void printError(char *message)
 {
     printf(COLOR_RED "ERR : %s\n" COLOR_RESET, message);

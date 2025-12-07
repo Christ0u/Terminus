@@ -45,6 +45,7 @@ char *getUserInput(void)
 
   if (getline(&buffer, &bufferSize, stdin) == -1)
   {
+    free(buffer);
     buffer = NULL;
 
     if (feof(stdin))
@@ -60,10 +61,39 @@ char *getUserInput(void)
   return buffer;
 }
 
+char **splitInput(char *string)
+{
+  char **tokens;
+  unsigned int position;
+  size_t bufferSize;
+
+  bufferSize = BUFSIZ;
+  tokens = createMemoryAllocation(bufferSize * sizeof(*tokens));
+  position = 0;
+
+  // Séparation des jetons en fonction du séparateur défini
+  for (char *token = strtok(string, DELIMITER); token; token = strtok(NULL, DELIMITER))
+  {
+    tokens[position++] = token;
+
+    // Gestion des chaînes de caractères trop grandes
+    if (position >= bufferSize)
+    {
+      bufferSize *= 2;
+      tokens = setMemoryAllocation(tokens, bufferSize * sizeof(*tokens));
+    }
+  }
+
+  tokens[position] = NULL;
+
+  return tokens;
+}
+
 // Boucle REPL
-int main(int argc, char **argv)
+int main()
 {
   char *userInput;
+  char **arguments;
 
   while (true)
   {
@@ -72,11 +102,20 @@ int main(int argc, char **argv)
     displayPrompt();
 
     userInput = getUserInput();
-    printf("%s\n", userInput);
+    // printf("%s\n", userInput);
 
     // [2] - Evaluation de la saisie (E)
+    arguments = splitInput(userInput);
+    for (int i = 0; arguments[i]; ++i)
+    {
+      printf("%s\n", arguments[i]);
+    }
 
     // [3] - Exécution
+
+    // [4] - Libération mémoire
+    free(userInput);
+    free(arguments);
   }
 
   return EXIT_SUCCESS;
