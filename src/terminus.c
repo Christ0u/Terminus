@@ -117,8 +117,9 @@ int executeSystemCommands(char **arguments)
 // Boucle REPL
 int main()
 {
-  char *userInput;
-  char **arguments;
+  char *userInput = NULL;
+  char *input_copy = NULL;
+  command_t *cmd = NULL;
 
   while (true)
   {
@@ -126,31 +127,49 @@ int main()
     displayPrompt();
 
     userInput = getUserInput();
-    // printf("%s\n", userInput);
-
-    // [2] - Evaluation de la saisie
-    arguments = splitInput(userInput);
-
-    // Si aucun token n'est défini (ligne vide ou caractères séparateurs uniquement)
-    if (!arguments || !arguments[0])
-    {
-      free(userInput);
-      free(arguments);
-      continue;
+    //printf("%s\n", userInput);
+    
+    // pour debug pck relou le core dumped là
+    if (!userInput) {
+      printf("\n");
+      break; 
     }
 
-    // for (int i = 0; arguments[i]; ++i)
-    // {
-    //   printf("%s\n", arguments[i]);
-    // }
+    input_copy = strdup(userInput);
+    
+    if (input_copy == NULL) {
+      perror("strdup failed");
+      free(userInput);
+      continue;
+    }
+    
+    cmd = parse_line(input_copy); 
 
-    // [3] - Exécution
-    executeBuiltinCommands(arguments);
-    // executeSystemCommands(arguments);
+    if (cmd == NULL) {
+      free(userInput);
+      free(input_copy);
+      continue;
+    }
+    
+    debug_print_command(cmd);
 
+    // [2] - Exécution
+    if (cmd->argv && cmd->argv[0])
+    {
+      executeBuiltinCommands(cmd->argv);
+      // executeSystemCommands(cmd->argv);
+    }
+    
     // [4] - Libération mémoire
-    free(userInput);
-    free(arguments);
+    if (cmd->argv) free(cmd->argv); // Libère le tableau de pointeurs
+    free(cmd);                      // Libère la structure command_t
+    
+    free(userInput);                // Libère la chaîne originale (getline)
+    free(input_copy);               // Libère la copie et les jetons (strdup)
+
+    userInput = NULL;
+    input_copy = NULL;
+    cmd = NULL; 
   }
 
   return EXIT_SUCCESS;
