@@ -9,6 +9,8 @@
 #include <unistd.h>   // fork()
 #include <sys/wait.h> // wait()
 
+#include "typedef.h"
+
 // SECTION - Directives de préprocesseur
 #define PROJECT_NAME "Terminus"
 #define DELIMITER "\n\t "
@@ -28,5 +30,6 @@ void getCurrentWorkingDirectory(char *buffer, size_t size);
 void displayArguments(int argc, char **argv);
 
 int builtin_exit(char **);
+int builtin_pwd(char **);
 
 #endif

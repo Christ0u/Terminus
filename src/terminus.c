@@ -1,8 +1,10 @@
 #include "terminus.h"
-#include "typedef.h"
 
 builtin builtins[] = {
+    //{.name = "cd", .function = builtin_cd},
+    {.name = "pwd", .function = builtin_pwd},
     {.name = "exit", .function = builtin_exit},
+    //{.name = "echo", .function = builtin_echo},
     {.name = NULL},
 };
 
