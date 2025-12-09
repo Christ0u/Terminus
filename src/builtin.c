@@ -52,3 +52,27 @@ int builtin_echo(char **arguments)
 
     return EXIT_SUCCESS;
 }
+
+int builtin_cd(char **arguments)
+{
+    char *path;
+
+    // Si aucun argument ou un argument vide est précisé
+    if (!arguments || !arguments[1])
+    {
+        // Récupération du répertoire HOME de l'utilisateur
+        path = getenv("HOME");
+    }
+    else
+    {
+        path = arguments[1];
+    }
+
+    if (chdir(path) == -1)
+    {
+        perror("cd failed");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

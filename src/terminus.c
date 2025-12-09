@@ -1,7 +1,7 @@
 #include "terminus.h"
 
 builtin builtins[] = {
-    //{.name = "cd", .function = builtin_cd},
+    {.name = "cd", .function = builtin_cd},
     {.name = "pwd", .function = builtin_pwd},
     {.name = "exit", .function = builtin_exit},
     {.name = "echo", .function = builtin_echo},

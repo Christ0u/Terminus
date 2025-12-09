@@ -32,5 +32,6 @@ void displayArguments(int argc, char **argv);
 int builtin_exit(char **);
 int builtin_pwd(char **);
 int builtin_echo(char **);
+int builtin_cd(char **);
 
 #endif
