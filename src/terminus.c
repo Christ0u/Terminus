@@ -1,37 +1,13 @@
-#include "Terminus.h"
+#include "terminus.h"
+#include "typedef.h"
 
-/*
-int main(int argc, char **argv)
-{
-  // displayArguments(argc, argv);
+builtin builtins[] = {
+    {.name = "exit", .function = builtin_exit},
+    {.name = NULL},
+};
 
-  int status;
-
-  // Création d'un processus fils dédié à l'exécution de la commande passée en argument
-  pid_t childPID = fork();
-
-  // Erreur lors de la création du processus fils
-  if (childPID == -1)
-  {
-    perror("fork");
-    return 1;
-  }
-  // Processus fils
-  else if (childPID == 0)
-  {
-    // Exécution de la commande avec les paramètres
-    execvp(argv[1], argv + 1);
-  }
-  // Processus père
-  else
-  {
-    wait(&status);
-  }
-
-  return EXIT_SUCCESS;
-}
-
-*/
+// Code de retour des commmandes exécutées (builtins et systèmes)
+int exitStatus = 0;
 
 void displayPrompt(void)
 {
@@ -89,6 +65,53 @@ char **splitInput(char *string)
   return tokens;
 }
 
+void executeBuiltinCommands(char **arguments)
+{
+  int i = 0;
+  const char *currentBuiltin;
+
+  while ((currentBuiltin = builtins[i].name))
+  {
+    if (!strcmp(currentBuiltin, arguments[0]))
+    {
+      builtins[i].function(arguments);
+      return;
+    }
+
+    i++;
+  }
+}
+
+/*
+int executeSystemCommands(char **arguments)
+{
+  int waitStatus;
+
+  // Création d'un processus fils dédié à l'exécution de la commande passée en argument
+  pid_t childPID = fork();
+
+  // Erreur lors de la création du processus fils
+  if (childPID == -1)
+  {
+    perror("fork");
+    return EXIT_FAILURE;
+  }
+  // Processus fils
+  else if (childPID == 0)
+  {
+    // Exécution de la commande avec les arguments
+    execvp(arguments[0], arguments);
+  }
+  // Processus père
+  else
+  {
+    wait(&waitStatus);
+  }
+
+  return EXIT_SUCCESS;
+}
+*/
+
 // Boucle REPL
 int main()
 {
@@ -97,21 +120,31 @@ int main()
 
   while (true)
   {
-    // [1] - Récupération de la saisie (R)
-
+    // [1] - Récupération de la saisie
     displayPrompt();
 
     userInput = getUserInput();
     // printf("%s\n", userInput);
 
-    // [2] - Evaluation de la saisie (E)
+    // [2] - Evaluation de la saisie
     arguments = splitInput(userInput);
+
+    // Si aucun token n'est défini (ligne vide ou caractères séparateurs uniquement)
+    if (!arguments || !arguments[0])
+    {
+      free(userInput);
+      free(arguments);
+      continue;
+    }
+
     for (int i = 0; arguments[i]; ++i)
     {
       printf("%s\n", arguments[i]);
     }
 
     // [3] - Exécution
+    executeBuiltinCommands(arguments);
+    // executeSystemCommands(arguments);
 
     // [4] - Libération mémoire
     free(userInput);

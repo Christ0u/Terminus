@@ -11,7 +11,7 @@
 
 // SECTION - Directives de préprocesseur
 #define PROJECT_NAME "Terminus"
-#define DELIMITER " "
+#define DELIMITER "\n\t "
 
 // Couleurs ANSI
 #define COLOR_RESET "\x1b[0m"
@@ -26,5 +26,7 @@ void *setMemoryAllocation(void *ptr, size_t size);
 
 void getCurrentWorkingDirectory(char *buffer, size_t size);
 void displayArguments(int argc, char **argv);
+
+int builtin_exit(char **);
 
 #endif

@@ -1,4 +1,4 @@
-#include "Terminus.h"
+#include "terminus.h"
 
 // getcwd wrapper
 void getCurrentWorkingDirectory(char *buffer, size_t size)
@@ -28,6 +28,8 @@ void *createMemoryAllocation(size_t size)
         perror("malloc failed");
         exit(EXIT_FAILURE);
     }
+
+    return ptr;
 }
 
 // realloc wrapper
