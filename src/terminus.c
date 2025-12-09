@@ -4,7 +4,7 @@ builtin builtins[] = {
     //{.name = "cd", .function = builtin_cd},
     {.name = "pwd", .function = builtin_pwd},
     {.name = "exit", .function = builtin_exit},
-    //{.name = "echo", .function = builtin_echo},
+    {.name = "echo", .function = builtin_echo},
     {.name = NULL},
 };
 
@@ -139,10 +139,10 @@ int main()
       continue;
     }
 
-    for (int i = 0; arguments[i]; ++i)
-    {
-      printf("%s\n", arguments[i]);
-    }
+    // for (int i = 0; arguments[i]; ++i)
+    // {
+    //   printf("%s\n", arguments[i]);
+    // }
 
     // [3] - Exécution
     executeBuiltinCommands(arguments);

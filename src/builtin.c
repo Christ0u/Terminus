@@ -10,7 +10,7 @@ int builtin_exit(char **arguments)
 
 int builtin_pwd(char **arguments)
 {
-    //printf("Built-in pwd called\n");
+    // printf("Built-in pwd called\n");
     (void)arguments;
 
     char *currentWorkingDirecetory;
@@ -18,13 +18,37 @@ int builtin_pwd(char **arguments)
 
     if (currentWorkingDirecetory == NULL)
     {
-        perror("getcwd() failed");
+        perror("getcwd failed");
         return EXIT_FAILURE;
     }
     else
     {
         printf("%s\n", currentWorkingDirecetory);
     }
+
+    return EXIT_SUCCESS;
+}
+
+int builtin_echo(char **arguments)
+{
+    // Si aucun argument ou un argument vide est précisé
+    if (!arguments || !arguments[1])
+    {
+        printf("\n");
+        return EXIT_SUCCESS;
+    }
+
+    for (int i = 1; arguments[i] != NULL; ++i)
+    {
+        printf("%s", arguments[i]);
+
+        if (arguments[i + 1])
+        {
+            printf(" ");
+        }
+    }
+
+    printf("\n");
 
     return EXIT_SUCCESS;
 }
