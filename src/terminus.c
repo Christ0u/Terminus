@@ -13,7 +13,7 @@ int exitStatus = 0;
 
 void displayPrompt(void)
 {
-  printf("[Terminus] > ");
+  printf("[%s] > ", PROJECT_NAME);
 }
 
 char *getUserInput(void)
@@ -130,6 +130,12 @@ int main()
 
     userInput = getUserInput();
     // printf("%s\n", userInput);
+
+    // Gestion des EndOfFile (CTRL + D)
+    if (!userInput)
+    {
+      break;
+    }
 
     // [2] - Evaluation de la saisie
     arguments = splitInput(userInput);
