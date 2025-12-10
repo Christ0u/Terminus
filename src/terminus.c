@@ -1,15 +1,16 @@
 #include "terminus.h"
 #include "parser.h"
+#include "builtin.h"
+#include "exec.h"
 
-builtin builtins[] = {
-    {.name = "cd", .function = builtin_cd},
-    {.name = "pwd", .function = builtin_pwd},
-    {.name = "exit", .function = builtin_exit},
-    {.name = "echo", .function = builtin_echo},
-    {.name = NULL},
+builtin_cmd builtins[] = {
+  {.name = "cd", .function = builtin_cd},
+  {.name = "pwd", .function = builtin_pwd},
+  {.name = "exit", .function = builtin_exit},
+  {.name = "echo", .function = builtin_echo},
+  {.name = NULL},
 };
 
-// Code de retour des commmandes exécutées (builtins et systèmes)
 int exitStatus = 0;
 
 void displayPrompt(void)
@@ -30,8 +31,7 @@ char *getUserInput(void)
     if (feof(stdin))
     {
       printError("EndOfFile");
-    }
-    else
+    } else
     {
       printError("getline failed");
     }
@@ -50,12 +50,10 @@ char **splitInput(char *string)
   tokens = createMemoryAllocation(bufferSize * sizeof(*tokens));
   position = 0;
 
-  // Séparation des jetons en fonction du séparateur défini
   for (char *token = strtok(string, DELIMITER); token; token = strtok(NULL, DELIMITER))
   {
     tokens[position++] = token;
 
-    // Gestion des chaînes de caractères trop grandes
     if (position >= bufferSize)
     {
       bufferSize *= 2;
@@ -116,7 +114,7 @@ int executeSystemCommands(char **arguments)
 */
 
 // Boucle REPL
-int main()
+int main(void)
 {
   char *userInput = NULL;
   char *input_copy = NULL;
@@ -124,53 +122,62 @@ int main()
 
   while (true)
   {
-    // [1] - Récupération de la saisie
     displayPrompt();
 
+    // Lecture
     userInput = getUserInput();
-    //printf("%s\n", userInput);
-    
-    // pour debug pck relou le core dumped là
     if (!userInput) {
       printf("\n");
-      break; 
+      break;   
     }
 
+    // Copie pour parser
     input_copy = strdup(userInput);
-    
-    if (input_copy == NULL) {
+    if (!input_copy) {
       perror("strdup failed");
       free(userInput);
       continue;
     }
-    
-    cmd = parse_line(input_copy); 
 
-    if (cmd == NULL) {
+    // Parser
+    cmd = parse_line(input_copy);
+    if (!cmd) {
       free(userInput);
       free(input_copy);
       continue;
     }
-    
+
+    parse_redirections(cmd);
     debug_print_command(cmd);
 
-    // [2] - Exécution
-    if (cmd->argv && cmd->argv[0])
-    {
-      executeBuiltinCommands(cmd->argv);
-      // executeSystemCommands(cmd->argv);
+    // Exécution unique : builtin OU externe
+    execute(cmd);
+
+    // Nettoyage
+    if (cmd->argv) {
+      free(cmd->argv);
+    } 
+
+    if (cmd->outfile) {
+      free(cmd->outfile);
+    }
+
+    if (cmd->infile) {
+      free(cmd->infile);
+    }
+
+    if (cmd->heredoc_content) {
+      free(cmd->heredoc_content);
     }
     
-    // [4] - Libération mémoire
-    if (cmd->argv) free(cmd->argv); // Libère le tableau de pointeurs
-    free(cmd);                      // Libère la structure command_t
-    
-    free(userInput);                // Libère la chaîne originale (getline)
-    free(input_copy);               // Libère la copie et les jetons (strdup)
+    free(cmd);
+
+    free(userInput);
+    free(input_copy);
 
     userInput = NULL;
     input_copy = NULL;
-    cmd = NULL; 
+    cmd = NULL;
   }
 
   return EXIT_SUCCESS;

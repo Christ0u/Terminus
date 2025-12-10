@@ -17,8 +17,7 @@ void *createMemoryAllocation(size_t size)
     if (size == 0)
     {
         return NULL;
-    }
-    else
+    } else
     {
         ptr = malloc(size);
     }
@@ -43,8 +42,7 @@ void *setMemoryAllocation(void *ptr, size_t size)
     {
         perror("realloc failed");
         exit(EXIT_FAILURE);
-    }
-    else
+    } else
     {
         return newPtr;
     }

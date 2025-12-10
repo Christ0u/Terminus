@@ -4,18 +4,17 @@ typedef struct builtin
     int (*function)(char **);
 } builtin;
 
-typedef struct command_s {
-    char **argv;        
+typedef struct {
+    char **argv;
 
-    int has_pipe;         
-    int redir_in;         
-    int redir_out;        
-    int redir_append;     
-    int heredoc;          
+    int redir_out;
+    int redir_append;
+    int redir_in;
+    int heredoc;
 
-    int has_and;         
-    int has_or;           
-    int background;       
+    char *outfile; //  >
+    char *infile; //  <
+    char *heredoc_content; //  <<
 
-    char *filename;
+    int background; // pour &
 } command_t;

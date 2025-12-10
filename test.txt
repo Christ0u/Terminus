@@ -1,0 +1,12 @@
+Hello World
+[Terminus] >=== DEBUG COMMAND ===
+argv[0] = 'cat'
+redir_out      = 0
+redir_append   = 0
+redir_in       = 0
+heredoc        = 1
+outfile        = (null)
+infile         = (null)
+heredoc_content= EOF
+======================
+EOF[Terminus] >
