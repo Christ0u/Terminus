@@ -13,7 +13,7 @@ int exitStatus = 0;
 
 void displayPrompt(void)
 {
-  printf("[Terminus] >");
+  printf("[Terminus] > ");
 }
 
 char *getUserInput(void)
@@ -67,8 +67,10 @@ char **splitInput(char *string)
   return tokens;
 }
 
-void executeBuiltinCommands(char **arguments)
+int executeCommands(char **arguments)
 {
+  // SECTION - Builtin commands execution
+
   int i = 0;
   const char *currentBuiltin;
 
@@ -76,17 +78,19 @@ void executeBuiltinCommands(char **arguments)
   {
     if (!strcmp(currentBuiltin, arguments[0]))
     {
-      builtins[i].function(arguments);
-      return;
+      if (builtins[i].function(arguments) == EXIT_FAILURE)
+      {
+        return EXIT_FAILURE;
+      }
+
+      return EXIT_SUCCESS;
     }
 
     i++;
   }
-}
 
-/*
-int executeSystemCommands(char **arguments)
-{
+  // SECTION - Native bash commands execution
+
   int waitStatus;
 
   // Création d'un processus fils dédié à l'exécution de la commande passée en argument
@@ -112,7 +116,6 @@ int executeSystemCommands(char **arguments)
 
   return EXIT_SUCCESS;
 }
-*/
 
 // Boucle REPL
 int main()
@@ -145,8 +148,7 @@ int main()
     // }
 
     // [3] - Exécution
-    executeBuiltinCommands(arguments);
-    // executeSystemCommands(arguments);
+    executeCommands(arguments);
 
     // [4] - Libération mémoire
     free(userInput);
