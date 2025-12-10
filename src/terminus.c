@@ -13,7 +13,7 @@ int exitStatus = 0;
 
 void displayPrompt(void)
 {
-  printf("[%s] > ", PROJECT_NAME);
+  printf(COLOR_GREEN "[ %s ]" COLOR_RESET " : " COLOR_WHITE "%s" COLOR_RESET " > ", PROJECT_NAME, getcwd(NULL, 0));
 }
 
 char *getUserInput(void)
@@ -107,6 +107,9 @@ int executeCommands(char **arguments)
   {
     // Exécution de la commande avec les arguments
     execvp(arguments[0], arguments);
+
+    perror("command not found");
+    exit(EXIT_FAILURE);
   }
   // Processus père
   else
@@ -147,11 +150,6 @@ int main()
       free(arguments);
       continue;
     }
-
-    // for (int i = 0; arguments[i]; ++i)
-    // {
-    //   printf("%s\n", arguments[i]);
-    // }
 
     // [3] - Exécution
     executeCommands(arguments);
