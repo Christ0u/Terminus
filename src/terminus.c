@@ -1,4 +1,5 @@
 #include "terminus.h"
+#include "parser.h"
 
 builtin builtins[] = {
     {.name = "cd", .function = builtin_cd},
