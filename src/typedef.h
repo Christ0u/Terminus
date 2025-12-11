@@ -15,6 +15,7 @@ typedef struct {
     char *outfile; //  >
     char *infile; //  <
     char *heredoc_content; //  <<
+    char *heredoc_delimiter; // pour stocker EOF
 
     int background; // pour &
 } command_t;

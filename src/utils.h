@@ -13,4 +13,6 @@ void printError(char *message);
 
 void displayArguments(int argc, char **argv);
 
+char *read_heredoc_content(const char *delimiter);
+
 #endif

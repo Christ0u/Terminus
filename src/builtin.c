@@ -5,7 +5,6 @@
 
 int builtin_exit(char **arguments)
 {
-    // printf("Built-in exit called\n");
     (void)arguments;
 
     exit(EXIT_SUCCESS);
@@ -13,7 +12,6 @@ int builtin_exit(char **arguments)
 
 int builtin_pwd(char **arguments)
 {
-    // printf("Built-in pwd called\n");
     (void)arguments;
 
     char *currentWorkingDirecetory;
@@ -23,8 +21,7 @@ int builtin_pwd(char **arguments)
     {
         perror("getcwd failed");
         return EXIT_FAILURE;
-    }
-    else
+    } else
     {
         printf("%s\n", currentWorkingDirecetory);
     }
@@ -65,8 +62,7 @@ int builtin_cd(char **arguments)
     {
         // Récupération du répertoire HOME de l'utilisateur
         path = getenv("HOME");
-    }
-    else
+    } else
     {
         path = arguments[1];
     }
@@ -102,30 +98,36 @@ int buildtin_redirect_output(const char *filename, int append)
     }
 
     close(fd);
+
     return 0;
 }
 
 int builtin_redirect_input(const char *filename)
 {
     int fd = open(filename, O_RDONLY);
+
     if (fd < 0) {
         perror("open");
+
         return -1;
     }
 
     if (dup2(fd, STDIN_FILENO) < 0) {
         perror("dup2");
         close(fd);
+
         return -1;
     }
 
     close(fd);
+
     return 0;
 }
 
 int builtin_heredoc_input(const char *content)
 {
     int fd[2];
+
     if (pipe(fd) < 0) {
         perror("pipe");
         return -1;
@@ -144,8 +146,10 @@ int builtin_create_pipe(int pipefd[2])
 {
     if (pipe(pipefd) < 0) {
         perror("pipe");
+
         return -1;
     }
+    
     return 0;
 }
 

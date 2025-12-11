@@ -47,32 +47,84 @@ void parse_redirections(command_t *cmd) {
 
     int write_idx = 0;
     for (int i = 0; cmd->argv[i]; i++) {
-        if (strcmp(cmd->argv[i], ">") == 0 && cmd->argv[i+1]) {
-            cmd->redir_out = 1;
-            cmd->outfile = strdup(cmd->argv[i+1]);
-            i++;
-            continue;
+        
+
+        if (strcmp(cmd->argv[i], ">") == 0) {
+            if (cmd->argv[i+1]) {
+                cmd->redir_out = 1;
+                if (cmd->outfile) {
+                    free(cmd->outfile);
+                }
+
+                cmd->outfile = strdup(cmd->argv[i+1]);
+                i++; 
+
+                continue;
+            } else {
+                fprintf(stderr, "Terminus: Erreur de syntaxe près du '>' (manque le fichier de sortie)\n");
+                cmd->argv[write_idx++] = cmd->argv[i]; 
+            
+                continue;
+            }
         }
 
-        if (strcmp(cmd->argv[i], ">>") == 0 && cmd->argv[i+1]) {
-            cmd->redir_append = 1;
-            cmd->outfile = strdup(cmd->argv[i+1]);
-            i++;
-            continue;
+        if (strcmp(cmd->argv[i], ">>") == 0) {
+            if (cmd->argv[i+1]) {
+                cmd->redir_append = 1;
+                if (cmd->outfile) 
+                {
+                    free(cmd->outfile);
+                }
+                cmd->outfile = strdup(cmd->argv[i+1]);
+                i++;
+                continue;
+            } else {
+                fprintf(stderr, "Terminus: Erreur de syntaxe près du '>>' (manque le fichier de sortie)\n");
+                cmd->argv[write_idx++] = cmd->argv[i];
+                continue;
+            }
         }
 
-        if (strcmp(cmd->argv[i], "<") == 0 && cmd->argv[i+1]) {
-            cmd->redir_in = 1;
-            cmd->infile = strdup(cmd->argv[i+1]);
-            i++;
-            continue;
+        if (strcmp(cmd->argv[i], "<") == 0) {
+            if (cmd->argv[i+1]) {
+                cmd->redir_in = 1;
+                if (cmd->infile) 
+                {
+                    free(cmd->infile);
+                }
+                cmd->infile = strdup(cmd->argv[i+1]);
+                i++; 
+                continue;
+            } else {
+                fprintf(stderr, "Terminus: Erreur de syntaxe près du '<' (manque le fichier d'entrée)\n");
+                cmd->argv[write_idx++] = cmd->argv[i];
+                continue;
+            }
         }
 
-        if (strcmp(cmd->argv[i], "<<") == 0 && cmd->argv[i+1]) {
-            cmd->heredoc = 1;
-            cmd->heredoc_content = strdup(cmd->argv[i+1]);
-            i++;
-            continue;
+        if (strcmp(cmd->argv[i], "<<") == 0) {
+            if (cmd->argv[i+1]) {
+                cmd->heredoc = 1;
+                
+                // STOCKER LE DÉLIMITEUR
+                if (cmd->heredoc_delimiter) 
+                {
+                    free(cmd->heredoc_delimiter);
+                }
+                cmd->heredoc_delimiter = strdup(cmd->argv[i+1]);
+                
+                if (cmd->heredoc_content) 
+                { 
+                    free(cmd->heredoc_content); cmd->heredoc_content = NULL; 
+                }
+                
+                i++; 
+                continue;
+            } else {
+                fprintf(stderr, "Terminus: Erreur de syntaxe près du '<<' (manque le délimiteur)\n");
+                cmd->argv[write_idx++] = cmd->argv[i];
+                continue;
+            }
         }
 
         cmd->argv[write_idx++] = cmd->argv[i];
@@ -104,7 +156,6 @@ command_t *parse_line(char *line) {
 
     return cmd;
 }
-
 
 // ----------------------------------------------------
 //   Debug

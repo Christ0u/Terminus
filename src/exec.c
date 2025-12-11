@@ -9,31 +9,58 @@
 
 // Exécution d'un builtin avec redirections
 static int exec_builtin(command_t *cmd) {
-    if (!cmd || !cmd->argv[0]) return -1;
+    if (!cmd || !cmd->argv[0]) {
+        return -1;
+    }
+   
+    int saved_stdout = -1;
+    int saved_stdin = -1;
+    int ret_status = -1;
 
     for (int i = 0; builtins[i].name; ++i) {
         if (strcmp(cmd->argv[0], builtins[i].name) == 0) {
+            
+            // SAUVEGARDE DES DESCRIPTEURS ORIGINAUX SI UNE REDIRECTION EST PRÉVUE
+            if (cmd->redir_out || cmd->redir_append) {
+                saved_stdout = dup(STDOUT_FILENO);
+            }
+
+            if (cmd->redir_in || cmd->heredoc) {
+                saved_stdin = dup(STDIN_FILENO);
+            }
 
             if (cmd->redir_out && cmd->outfile) {
                 buildtin_redirect_output(cmd->outfile, 0);
             }
 
-
             if (cmd->redir_append && cmd->outfile) {
                 buildtin_redirect_output(cmd->outfile, 1);
             }
-
 
             if (cmd->redir_in && cmd->infile) {
                 builtin_redirect_input(cmd->infile);
             }
 
-
             if (cmd->heredoc && cmd->heredoc_content) {
                 builtin_heredoc_input(cmd->heredoc_content);
             }
    
-            return builtins[i].function(cmd->argv);
+            // EXÉCUTION
+            ret_status = builtins[i].function(cmd->argv);
+
+            // RESTAURATION DES DESCRIPTEURS APRÈS L'EXÉCUTION
+            if (saved_stdout != -1) {
+                fflush(stdout); 
+                dup2(saved_stdout, STDOUT_FILENO);
+                close(saved_stdout);
+            }
+
+            if (saved_stdin != -1) {
+                dup2(saved_stdin, STDIN_FILENO); 
+                close(saved_stdin);
+            }
+            
+            return ret_status;
         }
     }
 
@@ -43,6 +70,7 @@ static int exec_builtin(command_t *cmd) {
 // Exécution d'une commande système
 static int exec_simple(command_t *cmd) {
     pid_t pid = fork();
+
     if (pid == 0) {
         if (cmd->redir_out) {
             buildtin_redirect_output(cmd->outfile, 0);
@@ -78,6 +106,7 @@ int execute(command_t *cmd) {
 
     // Vérifier si builtin
     int status = exec_builtin(cmd);
+    
     if (status != -1) {
         return status;
     }

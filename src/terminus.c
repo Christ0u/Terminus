@@ -2,6 +2,7 @@
 #include "parser.h"
 #include "builtin.h"
 #include "exec.h"
+#include "utils.h"
 
 builtin_cmd builtins[] = {
   {.name = "cd", .function = builtin_cd},
@@ -16,6 +17,7 @@ int exitStatus = 0;
 void displayPrompt(void)
 {
   printf("[Terminus] >");
+  fflush(stderr);
 }
 
 char *getUserInput(void)
@@ -122,16 +124,16 @@ int main(void)
 
   while (true)
   {
+    // [1] - Affichage du prompt et lecture de l'entrée
     displayPrompt();
 
-    // Lecture
     userInput = getUserInput();
     if (!userInput) {
       printf("\n");
       break;   
     }
 
-    // Copie pour parser
+    // [2] - Copie et Parsing
     input_copy = strdup(userInput);
     if (!input_copy) {
       perror("strdup failed");
@@ -139,7 +141,6 @@ int main(void)
       continue;
     }
 
-    // Parser
     cmd = parse_line(input_copy);
     if (!cmd) {
       free(userInput);
@@ -147,13 +148,30 @@ int main(void)
       continue;
     }
 
-    parse_redirections(cmd);
+    // [3] - Lecture interactive du contenu du Here Document (si << est présent)
+    if (cmd->heredoc && cmd->heredoc_delimiter) 
+    {
+      cmd->heredoc_content = read_heredoc_content(cmd->heredoc_delimiter);
+        
+      if (!cmd->heredoc_content && cmd->heredoc_delimiter) 
+      { 
+        fprintf(stderr, "Terminus: Erreur lors de la lecture du Here Document.\n");
+      
+        free(cmd->heredoc_delimiter);
+        free(cmd->argv);
+        free(cmd);
+        free(userInput);
+        free(input_copy);
+        continue;
+      }
+    }
+
     debug_print_command(cmd);
+    
+    // [4] - Exécution
+    execute(cmd); // La fonction execute gère les redirections
 
-    // Exécution unique : builtin OU externe
-    execute(cmd);
-
-    // Nettoyage
+    // [5] - Nettoyage complet
     if (cmd->argv) {
       free(cmd->argv);
     } 
@@ -164,6 +182,10 @@ int main(void)
 
     if (cmd->infile) {
       free(cmd->infile);
+    }
+    
+    if (cmd->heredoc_delimiter) {
+      free(cmd->heredoc_delimiter);
     }
 
     if (cmd->heredoc_content) {
