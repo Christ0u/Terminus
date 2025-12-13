@@ -14,6 +14,7 @@
 #include <fcntl.h>    
 #include <stdbool.h>
 #include "alias.h"
+#include <ctype.h>
 
 
 // Définition du tableau des commandes builtins
@@ -430,8 +431,7 @@ int executeCommands(char **arguments, bool is_background, int input_fd, int outp
         } 
         else 
         {
-            extern char **g_environment;
-            execve(new_args[0], new_args, g_environment);
+            execvp(new_args[0], new_args);
             perror(new_args[0]);
             free(new_args);
 
@@ -706,7 +706,7 @@ char *replace_heredoc_arg(char *raw_command, const char *delimiter, const char *
     snprintf(insertion_pattern, sizeof(insertion_pattern), "< %s", temp_filename);
     
     size_t len_insert = strlen(insertion_pattern);
-    size_t len_raw = strlen(raw_command);
+    //size_t len_raw = strlen(raw_command);
 
 
     size_t offset_start = start_replace - raw_command; 
