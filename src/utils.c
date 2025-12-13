@@ -17,7 +17,8 @@ void *createMemoryAllocation(size_t size)
     if (size == 0)
     {
         return NULL;
-    } else
+    } 
+    else
     {
         ptr = malloc(size);
     }
@@ -42,7 +43,8 @@ void *setMemoryAllocation(void *ptr, size_t size)
     {
         perror("realloc failed");
         exit(EXIT_FAILURE);
-    } else
+    } 
+    else
     {
         return newPtr;
     }
@@ -70,7 +72,8 @@ void displayArguments(int argc, char **argv)
 }
 
 // PAS TEMPORAIRE DONC PAS SUPPRIMER
-char *read_heredoc_content(const char *delimiter) {
+char *read_heredoc_content(const char *delimiter) 
+{
     char *full_content = NULL; 
     size_t total_len = 0;
     
@@ -79,20 +82,28 @@ char *read_heredoc_content(const char *delimiter) {
     ssize_t read;
     
     fprintf(stderr, "> "); 
-    while ((read = getline(&line, &len, stdin)) != -1) {
+
+    while ((read = getline(&line, &len, stdin)) != -1) 
+    {
         
-        if (read > 0 && line[read - 1] == '\n') {
+        if (read > 0 && line[read - 1] == '\n') 
+        {
             line[read - 1] = '\0';
             
-            if (strcmp(line, delimiter) == 0) {
-               
+            if (strcmp(line, delimiter) == 0) 
+            {
                 free(line);
+
                 return full_content ? full_content : strdup(""); 
             }
             
             line[read - 1] = '\n'; 
-        } else if (strcmp(line, delimiter) == 0) {
+
+        } 
+        else if (strcmp(line, delimiter) == 0) 
+        {
             free(line);
+
             return full_content ? full_content : strdup("");
         }
 
@@ -102,11 +113,13 @@ char *read_heredoc_content(const char *delimiter) {
         size_t new_total_len = total_len + current_line_len + 1; // +1 pour '\0'
 
         char *new_content = realloc(full_content, new_total_len);
+
         if (new_content == NULL) 
         {
             perror("realloc failed");
             free(full_content);
             free(line);
+
             return NULL;
         }
 
@@ -122,4 +135,45 @@ char *read_heredoc_content(const char *delimiter) {
     free(line); 
 
     return full_content;
+}
+
+char **splitPipes(char *string)
+{
+    char **commands;
+    int bufferSize = BUFSIZ;
+    int position = 0;
+
+    commands = malloc(bufferSize * sizeof(char*));
+
+    if (!commands) 
+    {
+        perror("malloc splitPipes failed");
+
+        return NULL;
+    }
+
+    for (char *command = strtok(string, "|"); command; command = strtok(NULL, "|"))
+    {
+        commands[position++] = command;
+
+        if (position >= bufferSize)
+        {
+            bufferSize *= 2;
+            char **new_commands = realloc(commands, bufferSize * sizeof(char*));
+
+            if (!new_commands) 
+            {
+                perror("realloc splitPipes failed");
+                free(commands);
+
+                return NULL;
+            }
+
+            commands = new_commands;
+        }
+    }
+
+    commands[position] = NULL;
+    
+    return commands;
 }

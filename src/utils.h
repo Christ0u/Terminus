@@ -15,4 +15,5 @@ void displayArguments(int argc, char **argv);
 
 char *read_heredoc_content(const char *delimiter);
 
+char **splitPipes(char *string);
 #endif

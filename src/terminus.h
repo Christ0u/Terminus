@@ -18,20 +18,18 @@
 // Couleurs ANSI
 #define COLOR_RESET "\x1b[0m"
 #define COLOR_RED "\x1b[31m"
+#define COLOR_GREEN "\x1b[1;32m"
+#define COLOR_WHITE "\x1b[1;37m"
 
 // SECTION - Prototypes
 void displayPrompt(void);
 char *getUserInput(void);
-void printError(char *message);
-void *createMemoryAllocation(size_t size);
-void *setMemoryAllocation(void *ptr, size_t size);
-
-void getCurrentWorkingDirectory(char *buffer, size_t size);
-void displayArguments(int argc, char **argv);
-
-int builtin_exit(char **);
-int builtin_pwd(char **);
-int builtin_echo(char **);
-int builtin_cd(char **);
+char **splitInput(char *string, bool *is_background);
+int executeCommands(char **arguments, bool is_background, int input_fd, int output_fd);
+int executePipeline(char **piped_commands);
+char *get_history_path();
+void display_history();
+void save_command_to_history(char *command);
+char *replace_heredoc_arg(char *raw_command, const char *delimiter, const char *temp_filename);
 
 #endif
