@@ -1,0 +1,58 @@
+.Dd 12/15/2025
+.Dt Terminus 1 "Terminus 1.0.0" "User Commands"
+.Os Linux
+.Sh NAME
+.Nm Terminus
+.Nd a minimal bash-style command interpreter implemented in C
+
+.Sh SYNOPSIS
+.Nm
+.Op -c | --command
+.Ar <command>
+.br
+.Op --help
+
+.Sh DESCRIPTION
+.Nm Terminus is an interactive shell for executing commands.
+.br
+Without parameters, it launches in interactive mode.
+
+.PP
+Options:
+.br
+.TP
+    -c, --command <command>
+    Execute the given command in batch mode (non-interactive mode).
+    The command should be enclosed in quotes if it contains spaces, pipes, or redirections.
+
+.TP
+    --help
+    Display this help message and exit.
+
+.Sh EXAMPLES
+.It
+.Nm
+.br
+Launch interactive shell.
+
+.It
+.Nm Fl c
+"ls -l"
+.br
+Execute "ls -l" in batch mode and exit.
+
+.It
+.Nm Cm --command
+"ls | grep .c"
+.br
+Execute a piped command in batch mode and exit.
+
+.It
+.Nm Cm --help
+.br
+Display help message.
+.El
+
+.Sh CREDITS
+Developed by Océanne DRUENNE (odruenne) and Christopher GERARD (Christ0u).
+Inspired by UNIX shells (bash, zsh).
