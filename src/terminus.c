@@ -921,7 +921,6 @@ int main(int argc, char **argv)
         char *batchParameterInput;
         char **batchCommands;
         bool isBackgrounded = false;
-        int executionStatus;
 
         if (argc == 3)
         {
@@ -931,6 +930,10 @@ int main(int argc, char **argv)
             if (!batchParameterInput)
             {
                 perror("strdup failed");
+
+                // Libération mémoire
+                free(batchParameterInput);
+
                 return EXIT_FAILURE;
             }
 
@@ -938,7 +941,10 @@ int main(int argc, char **argv)
             batchCommands = splitInput(batchParameterInput, &isBackgrounded);
 
             // Exécution de la commande en mode batch
-            executionStatus = executeCommands(batchCommands, isBackgrounded, STDIN_FILENO, STDOUT_FILENO);
+            executeCommands(batchCommands, isBackgrounded, STDIN_FILENO, STDOUT_FILENO);
+
+            // Libération mémoire
+            free(batchParameterInput);
         }
         else
         {
