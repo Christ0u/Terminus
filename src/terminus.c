@@ -754,13 +754,10 @@ int main(int argc, char **argv)
     char temp_filename[256] = {0};
     char *expanded_cmd = NULL;
 
+    // Initialisation
     init_environment();
 
-    char *line;
-    char **batchCommands;
-    bool batchBackground = false;
-    int batchExecutionStatus;
-
+    // Mode interractif
     if (argc == 1)
     {
         while (true)
@@ -918,34 +915,41 @@ int main(int argc, char **argv)
             piped_commands = NULL;
         }
     }
-    else if (argc >= 2 && strcmp(argv[1], "-c") == 0)
+    // Mode batch
+    else if (argc >= 2 && strcmp(argv[1], BATCH_DELIMITER) == 0)
     {
-        // ./bin/Terminus -c "<commands>"
+        char *batchParameterInput;
+        char **batchCommands;
+        bool isBackgrounded = false;
+        int executionStatus;
+
         if (argc == 3)
         {
-            printf("Mode batch...\n");
+            // Récupération de la valeur de l'argument -c
+            batchParameterInput = strdup(argv[2]);
 
-            line = strdup(argv[2]);
-
-            if (!line)
+            if (!batchParameterInput)
             {
                 perror("strdup failed");
                 return EXIT_FAILURE;
             }
 
-            batchCommands = splitInput(line, &batchBackground);
+            // Récupération de la commande à exécuter
+            batchCommands = splitInput(batchParameterInput, &isBackgrounded);
 
-            batchExecutionStatus = executeCommands(batchCommands, batchBackground, STDIN_FILENO, STDOUT_FILENO);
+            // Exécution de la commande en mode batch
+            executionStatus = executeCommands(batchCommands, isBackgrounded, STDIN_FILENO, STDOUT_FILENO);
         }
-        // ./bin/Terminus -c --> Erreur
         else
         {
             printError("Arguments invalides\n");
+            return EXIT_FAILURE;
         }
     }
     else
     {
         printError("Paramètres invalides\n");
+        return EXIT_FAILURE;
     }
 
     return EXIT_SUCCESS;
