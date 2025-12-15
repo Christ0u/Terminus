@@ -743,6 +743,45 @@ char *replace_heredoc_arg(char *raw_command, const char *delimiter, const char *
     return new_command;
 }
 
+// Affiche l'aide de la commande
+void displayHelp()
+{
+    printf(
+        "████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗██╗   ██╗███████╗\n"
+        "╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║████╗  ██║██║   ██║██╔════╝\n"
+        "   ██║   █████╗  ██████╔╝██╔████╔██║██║██╔██╗ ██║██║   ██║███████╗\n"
+        "   ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║██║╚██╗██║██║   ██║╚════██║\n"
+        "   ██║   ███████╗██║  ██║██║ ╚═╝ ██║██║██║ ╚████║╚██████╔╝███████║\n"
+        "   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝\n"
+        "\n"
+        "Terminus - a minimal bash-style command interpreter implemented in C\n"
+        "\n"
+        "USAGE:\n"
+        "  Terminus                      Launch the interactive shell\n"
+        "  Terminus -c <command>         Execute a command and exit\n"
+        "  Terminus --command <command>  Execute a command and exit\n"
+        "  Terminus --help               Display this help message and exit\n"
+        "\n"
+        "OPTIONS:\n"
+        "  -c, --command <command>\n"
+        "      Execute the given command in non-interactive mode.\n"
+        "      The command should be enclosed in quotes if it contains\n"
+        "      spaces, pipes, or redirections.\n"
+        "\n"
+        "  --help\n"
+        "      Display this help message.\n"
+        "\n"
+        "EXAMPLES:\n"
+        "  ./Terminus\n"
+        "  ./Terminus -c \"ls -l\"\n"
+        "  ./Terminus --command \"ls | grep .c\"\n"
+        "\n"
+        "CREDITS:\n"
+        "  Developed by Océane DRUENNE (odruenne) and Christopher GERARD (Christ0u)\n"
+        "  Inspired by UNIX shells (bash, zsh)\n"
+        "\n");
+}
+
 // Boucle REPL
 int main(int argc, char **argv)
 {
@@ -915,29 +954,68 @@ int main(int argc, char **argv)
             piped_commands = NULL;
         }
     }
-    // Mode batch
-    else if (argc >= 2 && strcmp(argv[1], BATCH_DELIMITER) == 0)
+    // Mode batch et affichage de l'aide
+    else if (argc >= 2)
     {
-        if (argc == 3)
-        {
-            // Récupération de la valeur de l'argument -c
-            char *batchParameterInput;
-            batchParameterInput = strdup(argv[2]);
+        char *batchCommand = NULL;
+        bool helpRequested = false;
+        bool batchParameterSpecified = false;
 
+        for (int i = 1; i < argc; i++)
+        {
+            // Détection du paramètre pour l'affichage de l'aide
+            if (strcmp(argv[i], HELP_PARAMETER_LONG) == 0)
+            {
+                helpRequested = true;
+                break;
+            }
+
+            // Détection du paramètre pour le mode batch
+            if (strcmp(argv[i], BATCH_PARAMETER) == 0 ||
+                strcmp(argv[i], BATCH_PARAMETER_LONG) == 0)
+            {
+                if (batchParameterSpecified)
+                {
+                    printError("Option -c/--command specified multiple times\n");
+                    return EXIT_FAILURE;
+                }
+
+                if (i + 1 >= argc)
+                {
+                    printError("Option -c/--command requires an argument\n");
+                    return EXIT_FAILURE;
+                }
+
+                batchCommand = argv[i + 1];
+                batchParameterSpecified = true;
+
+                i++;
+
+                continue;
+            }
+
+            printError("Arguments invalides\n");
+            return EXIT_FAILURE;
+        }
+
+        // Affichage de l'aide
+        if (helpRequested)
+        {
+            displayHelp();
+            return EXIT_SUCCESS;
+        }
+
+        // Mode batch
+        if (batchCommand)
+        {
+            char *batchParameterInput = strdup(batchCommand);
             if (!batchParameterInput)
             {
                 perror("strdup failed");
-
-                // Libération mémoire
-                free(batchParameterInput);
-
                 return EXIT_FAILURE;
             }
 
-            // Exécution de la commande en mode batch
-            char **pipedCommands;
-            pipedCommands = splitPipes(batchParameterInput);
-
+            char **pipedCommands = splitPipes(batchParameterInput);
             if (pipedCommands && pipedCommands[0])
             {
                 executePipeline(pipedCommands);
@@ -949,14 +1027,9 @@ int main(int argc, char **argv)
         }
         else
         {
-            printError("Arguments invalides\n");
+            printError("Paramètres invalides\n");
             return EXIT_FAILURE;
         }
-    }
-    else
-    {
-        printError("Paramètres invalides\n");
-        return EXIT_FAILURE;
     }
 
     return EXIT_SUCCESS;

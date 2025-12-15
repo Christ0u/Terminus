@@ -14,7 +14,10 @@
 // SECTION - Directives de préprocesseur
 #define PROJECT_NAME "Terminus"
 #define DELIMITER "\n\t "
-#define BATCH_DELIMITER "-c"
+
+#define BATCH_PARAMETER "-c"
+#define BATCH_PARAMETER_LONG "--command"
+#define HELP_PARAMETER_LONG "--help"
 
 // Couleurs ANSI
 #define COLOR_RESET "\x1b[0m"
