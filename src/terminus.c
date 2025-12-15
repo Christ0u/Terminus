@@ -918,13 +918,10 @@ int main(int argc, char **argv)
     // Mode batch
     else if (argc >= 2 && strcmp(argv[1], BATCH_DELIMITER) == 0)
     {
-        char *batchParameterInput;
-        char **batchCommands;
-        bool isBackgrounded = false;
-
         if (argc == 3)
         {
             // Récupération de la valeur de l'argument -c
+            char *batchParameterInput;
             batchParameterInput = strdup(argv[2]);
 
             if (!batchParameterInput)
@@ -937,14 +934,18 @@ int main(int argc, char **argv)
                 return EXIT_FAILURE;
             }
 
-            // Récupération de la commande à exécuter
-            batchCommands = splitInput(batchParameterInput, &isBackgrounded);
-
             // Exécution de la commande en mode batch
-            executeCommands(batchCommands, isBackgrounded, STDIN_FILENO, STDOUT_FILENO);
+            char **pipedCommands;
+            pipedCommands = splitPipes(batchParameterInput);
+
+            if (pipedCommands && pipedCommands[0])
+            {
+                executePipeline(pipedCommands);
+            }
 
             // Libération mémoire
             free(batchParameterInput);
+            free(pipedCommands);
         }
         else
         {
