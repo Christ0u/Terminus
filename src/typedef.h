@@ -1,10 +1,14 @@
+#ifndef TYPEDEF_H
+#define TYPEDEF_H
+
 typedef struct builtin
 {
     const char *name;
     int (*function)(char **);
 } builtin;
 
-typedef struct {
+typedef struct
+{
     char **argv;
 
     int redir_out;
@@ -12,10 +16,12 @@ typedef struct {
     int redir_in;
     int heredoc;
 
-    char *outfile; //  >
-    char *infile; //  <
-    char *heredoc_content; //  <<
+    char *outfile;           //  >
+    char *infile;            //  <
+    char *heredoc_content;   //  <<
     char *heredoc_delimiter; // pour stocker EOF
 
     int background; // pour &
 } command_t;
+
+#endif

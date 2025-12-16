@@ -4,75 +4,9 @@
 #include <errno.h>
 #include <ctype.h>
 
-// getcwd wrapper
-void get_current_working_directory(char *buffer, size_t size)
-{
-    if (NULL == getcwd(buffer, size))
-    {
-        perror("getcwd");
-    }
-}
-
-// malloc wrapper
-void *create_memory_allocation(size_t size)
-{
-    void *ptr;
-
-    if (size == 0)
-    {
-        return NULL;
-    }
-    else
-    {
-        ptr = malloc(size);
-    }
-
-    if (!ptr)
-    {
-        perror("malloc failed");
-        exit(EXIT_FAILURE);
-    }
-
-    return ptr;
-}
-
-// realloc wrapper
-void *set_memory_allocation(void *ptr, size_t size)
-{
-    void *newPtr;
-
-    newPtr = realloc(ptr, size);
-
-    if (!newPtr && size != 0)
-    {
-        perror("realloc failed");
-        exit(EXIT_FAILURE);
-    }
-    else
-    {
-        return newPtr;
-    }
-}
-
 void print_error(char *message)
 {
     printf(COLOR_RED "ERR : %s\n" COLOR_RESET, message);
-}
-
-// NOTE - Fonctions temporaires
-void display_arguments(int argc, char **argv)
-{
-    for (int i = 0; i < argc; i++)
-    {
-        printf("Argument n°%d : ", i);
-
-        for (int j = 0; argv[i][j] != '\0'; j++)
-        {
-            printf("%c", argv[i][j]);
-        }
-
-        printf("\n");
-    }
 }
 
 char *read_heredoc_content(const char *delimiter)
@@ -650,4 +584,39 @@ void sigchld_handler(int sig)
     }
 
     errno = saved_errno;
+}
+
+// NOTE - Fonctions de debug
+void display_arguments(int argc, char **argv)
+{
+    for (int i = 0; i < argc; i++)
+    {
+        printf("Argument n°%d : ", i);
+
+        for (int j = 0; argv[i][j] != '\0'; j++)
+        {
+            printf("%c", argv[i][j]);
+        }
+
+        printf("\n");
+    }
+}
+
+void debug_print_command(command_t *cmd)
+{
+    printf("=== DEBUG COMMAND ===\n");
+
+    for (int i = 0; cmd->argv && cmd->argv[i]; i++)
+    {
+        printf("argv[%d] = '%s'\n", i, cmd->argv[i]);
+    }
+
+    printf("redir_out      = %d\n", cmd->redir_out);
+    printf("redir_append   = %d\n", cmd->redir_append);
+    printf("redir_in       = %d\n", cmd->redir_in);
+    printf("heredoc        = %d\n", cmd->heredoc);
+    printf("outfile        = %s\n", cmd->outfile ? cmd->outfile : "(null)");
+    printf("infile         = %s\n", cmd->infile ? cmd->infile : "(null)");
+    printf("heredoc_content= %s\n", cmd->heredoc_content ? cmd->heredoc_content : "(null)");
+    printf("======================\n");
 }

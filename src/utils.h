@@ -3,11 +3,7 @@
 
 #include <stddef.h>
 
-void get_current_working_directory(char *buffer, size_t size);
-void *create_memory_allocation(size_t size);
-void *set_memory_allocation(void *ptr, size_t size);
 void print_error(char *message);
-void display_arguments(int argc, char **argv);
 char *read_heredoc_content(const char *delimiter);
 char **split_pipes(char *string);
 char *find_command_path(const char *cmd);
@@ -19,4 +15,9 @@ void display_history();
 void save_command_to_history(char *command);
 char *replace_heredoc_arg(char *raw_command, const char *delimiter, const char *temp_filename);
 void sigchld_handler(int sig);
+
+// NOTE - Fonctions de debug
+void debug_print_command(command_t *cmd);
+void display_arguments(int argc, char **argv);
+
 #endif

@@ -364,30 +364,6 @@ int builtin_heredoc_input(const char *content)
     return 0;
 }
 
-// Crée un pipe pour la communication inter-processus
-int builtin_create_pipe(int pipefd[2])
-{
-    if (pipe(pipefd) < 0)
-    {
-        perror("pipe");
-
-        return -1;
-    }
-
-    return 0;
-}
-
-// Gère l'opérateur AND logique (&&)
-int builtin_execute_and(int exitStatus, void (*nextCommand)(void))
-{
-    if (exitStatus == 0 && nextCommand != NULL)
-    {
-        nextCommand();
-    }
-
-    return 0;
-}
-
 // Affiche l'historique des commandes
 int builtin_history(char **args)
 {

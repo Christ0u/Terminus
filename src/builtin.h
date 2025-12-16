@@ -29,8 +29,6 @@ int builtin_cd(char **arguments);
 int buildtin_redirect_output(const char *filename, int append);
 int builtin_redirect_input(const char *filename);
 int builtin_heredoc_input(const char *content);
-int builtin_create_pipe(int pipefd[2]);
-int builtin_execute_and(int exitStatus, void (*nextCommand)(void));
 int builtin_history(char **args);
 int builtin_alias(char **args);
 int builtin_unalias(char **args);
