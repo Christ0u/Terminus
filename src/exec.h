@@ -4,5 +4,7 @@
 #include "terminus.h"
 
 int execute(command_t *cmd);
+int execute_commands(char **arguments, bool is_background, int input_fd, int output_fd);
+int execute_pipeline(char **piped_commands, bool pipeline_is_background);
 
 #endif

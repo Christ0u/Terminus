@@ -113,7 +113,9 @@ void set_alias(const char *name, const char *value)
     if (g_aliases == NULL) 
     {
         g_aliases = new_alias;
-    } else {
+    } 
+    else 
+    {
         prev->next = new_alias; 
     }
 }
@@ -138,7 +140,9 @@ void unset_alias(const char *name)
             if (prev == NULL) 
             {
                 g_aliases = current->next; 
-            } else {
+            } 
+            else 
+            {
                 prev->next = current->next;
             }
             

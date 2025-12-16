@@ -118,7 +118,7 @@ int set_env_var(const char *var_assignment)
         }
     }
 
-    // Ajout d'une nouvelle variable.
+    // Ajout d'une nouvelle variable
     *equal_sign = '='; 
 
     int count = 0;
@@ -151,7 +151,8 @@ int set_env_var(const char *var_assignment)
 // Affiche ou définit des variables d'environnement
 int builtin_export(char **args) 
 {
-    if (args[1] == NULL) {
+    if (args[1] == NULL) 
+    {
         for (char **p = g_environment; *p != NULL; p++) 
         {
             printf("%s\n", *p);
@@ -169,6 +170,7 @@ int builtin_export(char **args)
             return EXIT_FAILURE;
         }
     }
+
     return EXIT_SUCCESS;
 }
 
@@ -207,6 +209,7 @@ int builtin_unset(char **args)
             }
         }
     }
+
     return EXIT_SUCCESS;
 }
 
@@ -233,7 +236,8 @@ int builtin_pwd(char **arguments)
         perror("getcwd failed");
         
         return EXIT_FAILURE;
-    } else
+    } 
+    else
     {
         printf("%s\n", currentWorkingDirecetory);
     }
@@ -278,7 +282,8 @@ int builtin_cd(char **arguments)
     {
         // Récupération du répertoire HOME de l'utilisateur
         path = getenv("HOME");
-    } else
+    } 
+    else
     {
         path = arguments[1];
     }
@@ -301,7 +306,9 @@ int buildtin_redirect_output(const char *filename, int append)
     if (append) 
     {
         fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-    } else {
+    } 
+    else 
+    {
         fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     }
         
@@ -452,13 +459,17 @@ int builtin_alias(char **args)
         
             free(arg_copy);
             
-        } else {
+        } 
+        else 
+        {
             char *value = get_alias_value(args[i]);
 
             if (value) 
             {
                 printf("alias %s='%s'\n", args[i], value);
-            } else {
+            } 
+            else 
+            {
                 fprintf(stderr, "alias: %s introuvable\n", args[i]);
                 exit_status = EXIT_FAILURE;
             }
