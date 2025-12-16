@@ -34,10 +34,25 @@ Le résultat des opérations est affiché dans le terminal. Le programme peut é
 
 ## II - Définition d'une commande
 
-<!--
-On détaillera comment est définie une commande.
-(c'est le moment de parler de la structure, de justifier son utilisation et d'expliquer comment elle est exploitée:D)
--->
+La structure command_t sert à représenter une commande saisie par l’utilisateur dans notre shell. Je voulais dans un premier temps utiliser une classe, mais comme nous sommes en C et non en C++, je me suis rabattue sur une structure.
+
+Elle contient un tableau argv qui stocke la commande et ses arguments. Les champs redir_out, redir_append, redir_in et heredoc indiquent si la commande contient des redirections (>, >>, < ou <<). 
+
+Les champs outfile, infile et heredoc_content stockent les fichiers ou le texte associés à ces redirections. heredoc_delimiter mémorise le mot de fin d’un here-document, et background indique si la commande doit s’exécuter en arrière-plan avec &.
+
+Par exemple, pour la commande : 
+```bash
+    echo hello > fichier.txt &
+```
+on aura :
+
+- argv = ["echo", "hello", NULL]
+
+- redir_out = 1 et outfile = "fichier.txt"
+
+- background = 1
+
+Cette structure permet de centraliser toutes les informations nécessaires pour exécuter la commande correctement, que ce soit un builtin ou une commande externe.
 
 ## III - Commandes "built-in"
 
@@ -68,8 +83,37 @@ Un ptit point sur les opérateurs serait pas de refus je pense.
 - Opérateurs de contrôle : && || &
 -->
 
+Dans notre shell, les **opérateurs** permettent de contrôler le flux des commandes ou de gérer les fichiers.  
+
+- **Opérateurs de redirection :**
+  - `<` : redirige l'entrée depuis un fichier (`commande < fichier`).
+  - `<<` : here-document, permet de donner directement un texte à une commande (`commande << EOF ... EOF`).
+  - `>` : redirige la sortie vers un fichier en écrasant (`commande > fichier`).
+  - `>>` : redirige la sortie vers un fichier en ajoutant à la fin (`commande >> fichier`).
+  - `|` : crée un pipe pour envoyer la sortie d'une commande vers l'entrée d'une autre (`commande1 | commande2`).
+
+- **Opérateurs de contrôle :**
+  - `&&` : exécute la commande suivante seulement si la précédente a réussi.
+  - `||` : exécute la commande suivante seulement si la précédente a échoué.
+  - `&` : exécute la commande en arrière-plan.
+
+Par exemple :  
+```bash
+echo "Salut" > message.txt &
+```
+Ici, > redirige la sortie vers message.txt et & indique que la commande s’exécute en arrière-plan.
+
+Dans le code, chaque opérateur est géré via des fonctions spécifiques : builtin_redirect_output pour >/>>, builtin_redirect_input pour <, et builtin_heredoc_input pour <<. 
+
+Les opérateurs de contrôle comme & sont pris en compte dans le champ background de la structure command_t.
+
 ## Conclusion
 
-<!--
-Blabla de fin
--->
+Océane : Ce projet était plutôt cool et fun à faire ! J'avais de l'appréhension au début car il fallait le faire en C et je ne suis pas très douée en systèmes. Le projet m'a pris plus de temps que prévu mais j'ai pu apprendre pas mal de choses. 
+
+J'ai utilisé l'IA non pas pour coder mais pour qu'elle m'explique des choses, notamment sur les pointeurs et les adresses car malgré les cours de Julien Schnell et de Julien Haristoy je n'avais toujours pas compris comment cela fonctionnait. 
+
+Je n'ai pas rencontré de seg fault (youpi) mais j'ai rencontré des core dumped (pas youpi). Au final, c'était juste moi qui oubliait d'include certains fichiers dans mon code.
+
+Preuve : 
+![preuve]("https://i.ibb.co/n8rwvgh9/Capture-d-cran-du-2025-12-16-21-49-44.png")
