@@ -118,3 +118,7 @@ Je n'ai pas rencontré de seg fault (youpi) mais j'ai rencontré des core dumped
 Preuve : 
 
 ![preuve](https://i.ibb.co/n8rwvgh9/Capture-d-cran-du-2025-12-16-21-49-44.png)
+
+
+Conclusion : 
+![meme](https://i.ibb.co/bgJ38cf5/hehe-not-hehe.jpg)
