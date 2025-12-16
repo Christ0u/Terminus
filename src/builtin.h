@@ -9,16 +9,17 @@
 
 typedef int (*builtin_func)(char **arguments);
 
-typedef struct {
+typedef struct
+{
     const char *name;
     builtin_func function;
 } builtin_cmd;
 
 extern builtin_cmd builtins[];
 
-
 void init_environment();
 int set_env_var(const char *var_assignment);
+void display_history();
 int builtin_export(char **args);
 int builtin_unset(char **args);
 int builtin_exit(char **arguments);
