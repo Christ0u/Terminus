@@ -116,4 +116,5 @@ J'ai utilisé l'IA non pas pour coder mais pour qu'elle m'explique des choses, n
 Je n'ai pas rencontré de seg fault (youpi) mais j'ai rencontré des core dumped (pas youpi). Au final, c'était juste moi qui oubliait d'include certains fichiers dans mon code.
 
 Preuve : 
-![preuve]("https://i.ibb.co/n8rwvgh9/Capture-d-cran-du-2025-12-16-21-49-44.png")
+
+![preuve](https://i.ibb.co/n8rwvgh9/Capture-d-cran-du-2025-12-16-21-49-44.png)
