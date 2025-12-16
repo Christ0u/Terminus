@@ -1,8 +1,4 @@
-#define _POSIX_C_SOURCE 200809L
-#define HISTORY_MAX_SIZE 1000
-
 #include "terminus.h"
-#include "parser.h"
 #include "builtin.h"
 #include "exec.h"
 #include "utils.h"
@@ -47,7 +43,7 @@ void display_prompt(void)
 }
 
 // Affiche l'aide de la commande
-void displayHelp()
+void display_help()
 {
     printf(
         "████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗██╗   ██╗███████╗\n"
@@ -88,6 +84,11 @@ void displayHelp()
 // Boucle REPL
 int main(int argc, char **argv)
 {
+    // Le shell ignore les signaux de job control
+    signal(SIGTTOU, SIG_IGN);
+    signal(SIGTTIN, SIG_IGN);
+    signal(SIGTSTP, SIG_IGN);
+
     char *userInput = NULL;
     char *input_copy = NULL;
     char **and_commands = NULL;
@@ -342,7 +343,7 @@ int main(int argc, char **argv)
         // Affichage de l'aide
         if (helpRequested)
         {
-            displayHelp();
+            display_help();
             return EXIT_SUCCESS;
         }
 
