@@ -1,6 +1,5 @@
 # Changelog
 
+## 1.0.0 (2025/12/17)
 
-
-
-- 11/12/2025 : Implementation of >, >>, <, << redirections.
+Version initiale
