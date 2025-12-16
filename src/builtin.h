@@ -1,11 +1,8 @@
 #ifndef BUILTIN_H
 #define BUILTIN_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <fcntl.h>
+#include "terminus.h"
+#include "alias.h"
 
 typedef int (*builtin_func)(char **arguments);
 

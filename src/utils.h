@@ -1,7 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <stddef.h>
+#include "terminus.h"
 
 void print_error(char *message);
 char *read_heredoc_content(const char *delimiter);

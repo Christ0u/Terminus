@@ -1,7 +1,7 @@
 #ifndef ALIAS_H
 #define ALIAS_H
 
-#include <stdlib.h>
+#include "terminus.h"
 
 typedef struct alias_s
 {

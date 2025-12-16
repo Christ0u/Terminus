@@ -1,8 +1,3 @@
-#include "terminus.h"
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdio.h>
-#include "alias.h"
 #include "builtin.h"
 
 extern char **environ;

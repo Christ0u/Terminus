@@ -1,9 +1,4 @@
 #include "alias.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include <ctype.h>
 
 // Retire les guillemets doubles entourant une chaîne pour les valeurs d'alias ou export
 void trim_quotes(char *in_out)

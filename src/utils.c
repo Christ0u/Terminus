@@ -1,8 +1,4 @@
-#define HISTORY_FILE ".terminus_history"
-
-#include "terminus.h"
-#include <errno.h>
-#include <ctype.h>
+#include "utils.h"
 
 void print_error(char *message)
 {

@@ -1,17 +1,4 @@
 #include "terminus.h"
-#include "builtin.h"
-#include "exec.h"
-#include "utils.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <fcntl.h>
-#include <stdbool.h>
-#include "alias.h"
-#include <signal.h>
-#include <ctype.h>
 
 // Tableau des commandes internes (builtins), chaque commande est associée à une fonction C
 builtin_cmd builtins[] = {

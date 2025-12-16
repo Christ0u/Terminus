@@ -7,16 +7,22 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-
-#include <unistd.h>   // fork()
-#include <sys/wait.h> // wait()
+#include <errno.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <ctype.h>
+#include <fcntl.h>
 
 #include "typedef.h"
+#include "builtin.h"
+#include "utils.h"
+#include "exec.h"
 
 // SECTION - Directives de préprocesseur
 #define PROJECT_NAME "Terminus"
 #define DELIMITER "\n\t "
 
+#define HISTORY_FILE ".terminus_history"
 #define HISTORY_MAX_SIZE 1000
 
 #define BATCH_PARAMETER "-c"
