@@ -1,0 +1,114 @@
+Terminus est un interpréteur de commandes shell Linux implémenté en C.
+
+Ce compte rendu détaille son principe de fonctionnement global ainsi que certains aspects plus spécifiques tel que la logique utilisée pour l\textquotesingle{}implémentation des différents opérateurs, par exemple.\hypertarget{md_report_autotoc_md11}{}\doxysection{I -\/ Boucle REPL}\label{md_report_autotoc_md11}
+La boucle REPL (Read, Evaluate, Print, Loop) est une méthode d\textquotesingle{}interraction avec un programme informatique particulièrement adaptée à l\textquotesingle{}implémentation d\textquotesingle{}un terminal.
+
+Elle se compose de trois séquences répétées indéfiniement jusqu\textquotesingle{}à la sortie du programme \+:\hypertarget{md_report_autotoc_md12}{}\doxysubsection{$>$ Lecture (\+Read)}\label{md_report_autotoc_md12}
+Tout d\textquotesingle{}abord, l\textquotesingle{}utilisateur saisit une série d\textquotesingle{}instructions dans une invite de commandes. Une fois validée (touche {\ttfamily Enter}), les instructions sont lues pas le programme.\hypertarget{md_report_autotoc_md13}{}\doxysubsection{$>$ Evaluation (\+Evaluate)}\label{md_report_autotoc_md13}
+Ensuite, les instructions sont décomposées en un tableau de jetons.
+
+Par exemple, l\textquotesingle{}utilisateur saisit l\textquotesingle{}entrée suivante \+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ls -\/l | grep toto}
+
+\end{DoxyCode}
+
+
+Chaque élément (jeton) composant cette suite d\textquotesingle{}instructions est décomposée de la manière suivante \+: {\ttfamily \mbox{[}\char`\"{}ls\char`\"{}, \char`\"{}-\/l\char`\"{}, \char`\"{}$\vert$\char`\"{}, \char`\"{}grep\char`\"{}, \char`\"{}toto\char`\"{}\mbox{]}}.
+
+Une fois les jetons isolés, chacun d\textquotesingle{}entre eux est interprété et déclenche une action bien définie. Par exemple, le caractère {\ttfamily $\vert$} crée un tube (voir chapitre IV).\hypertarget{md_report_autotoc_md14}{}\doxysubsection{$>$ Affichage (\+Print)}\label{md_report_autotoc_md14}
+Le résultat des opérations est affiché dans le terminal. Le programme peut également afficher des messages d\textquotesingle{}erreurs dans le cas d\textquotesingle{}instructions erronées.\hypertarget{md_report_autotoc_md15}{}\doxysection{II -\/ Définition d\textquotesingle{}une commande}\label{md_report_autotoc_md15}
+La structure {\ttfamily \mbox{\hyperlink{structcommand__t}{command\+\_\+t}}} sert à représenter une commande saisie par l’utilisateur dans notre shell. Je voulais dans un premier temps utiliser une classe, mais comme nous sommes en C et non en C++, je me suis rabattue sur une structure.
+
+Elle contient un tableau {\ttfamily argv} qui stocke la commande et ses arguments. Les champs {\ttfamily redir\+\_\+out}, {\ttfamily redir\+\_\+append}, {\ttfamily redir\+\_\+in} et {\ttfamily heredoc} indiquent si la commande contient des redirections ($>$, $>$$>$, $<$ ou $<$$<$).
+
+Les champs {\ttfamily outfile}, {\ttfamily infile} et {\ttfamily heredoc\+\_\+content} stockent les fichiers ou le texte associés à ces redirections. {\ttfamily heredoc\+\_\+delimiter} mémorise le mot de fin d’un here-\/document, et {\ttfamily background} indique si la commande doit s’exécuter en arrière-\/plan avec \&.
+
+Par exemple, pour la commande \+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{echo hello > fichier.txt \&}
+
+\end{DoxyCode}
+
+
+on aura \+:
+
+
+\begin{DoxyItemize}
+\item argv = \mbox{[}\char`\"{}echo\char`\"{}, \char`\"{}hello\char`\"{}, NULL\mbox{]}
+\item redir\+\_\+out = 1 et outfile = \char`\"{}fichier.\+txt\char`\"{}
+\item background = 1
+\end{DoxyItemize}
+
+Cette structure permet de centraliser toutes les informations nécessaires pour exécuter la commande correctement, que ce soit un builtin ou une commande externe.\hypertarget{md_report_autotoc_md16}{}\doxysection{III -\/ Commandes \char`\"{}built-\/in\char`\"{}}\label{md_report_autotoc_md16}
+Les commandes dites \char`\"{}built-\/in\char`\"{} sont des commandes internes qui ont leur propre implémentation au sein du code.
+
+Terminus embarque les commandes built-\/in suivantes \+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily cd} \+: Change le répertoire de travail du shell
+\item {\ttfamily pwd} \+: Affiche le nom du répertoire de travail courant
+\item {\ttfamily echo} \+: Écrit les arguments sur la sortie standard
+\item {\ttfamily export} \+: Affiche ou définit une variable d\textquotesingle{}environnement
+\item {\ttfamily unset} \+: Supprime une variable d\textquotesingle{}environnement
+\item {\ttfamily history} \+: Affiche l\textquotesingle{}historique des commandes exécutées
+\item {\ttfamily alias} \+: Affiche ou définit un alias
+\item {\ttfamily unalias} \+: Supprime un alias
+\item {\ttfamily exit} \+: Termine le shell
+\end{DoxyItemize}
+
+Une distinction doit donc être faite entre ces commandes built-\/in intégrée à Terminus et les commandes natives Bash.
+
+Pour ce faire, nous nous appuyons sur la structure {\ttfamily buitlin} qui, à un nom, associe une fonction.
+
+Une boucle parcourt l\textquotesingle{}ensemble des built-\/in enregistrées. Si la saisie utilisateur correspond à l\textquotesingle{}une d\textquotesingle{}entre-\/elle, la fonction associée est alors exécutée. En revanche, si la saisie utilisateur ne correspond à aucune built-\/in enregistrée, elle est intérprétée comme étant une commande native Bash.\hypertarget{md_report_autotoc_md17}{}\doxysection{IV -\/ Opérateurs}\label{md_report_autotoc_md17}
+Dans notre shell, les {\bfseries{opérateurs}} permettent de contrôler le flux des commandes ou de gérer les fichiers.
+
+
+\begin{DoxyItemize}
+\item {\bfseries{Opérateurs de redirection \+:}}
+\begin{DoxyItemize}
+\item {\ttfamily $<$} \+: redirige l\textquotesingle{}entrée depuis un fichier ({\ttfamily commande $<$ fichier}).
+\item {\ttfamily $<$$<$} \+: here-\/document, permet de donner directement un texte à une commande ({\ttfamily commande $<$$<$ EOF ... EOF}).
+\item {\ttfamily $>$} \+: redirige la sortie standard vers un fichier en écrasant le contenu existant ({\ttfamily commande $>$ fichier}).
+\item {\ttfamily $>$$>$} \+: redirige la sortie vers un fichier en ajoutant son contenu à la fin du contenu existant ({\ttfamily commande $>$$>$ fichier}).
+\item {\ttfamily $\vert$} \+: crée un tube permettant d\textquotesingle{}envoyer la sortie d\textquotesingle{}une commande vers l\textquotesingle{}entrée d\textquotesingle{}une autre ({\ttfamily commande1 $\vert$ commande2}).
+\end{DoxyItemize}
+\item {\bfseries{Opérateurs de contrôle \+:}}
+\begin{DoxyItemize}
+\item {\ttfamily \&\&} \+: exécute la commande suivante seulement si la précédente a réussi.
+\item {\ttfamily $\vert$$\vert$} \+: exécute la commande suivante seulement si la précédente a échoué.
+\item {\ttfamily \&} \+: exécute la commande en arrière-\/plan.
+\end{DoxyItemize}
+\end{DoxyItemize}
+
+Par exemple \+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{echo "{}Salut"{} > message.txt \&}
+
+\end{DoxyCode}
+
+
+Ici, l\textquotesingle{}opérateur {\ttfamily $>$} redirige la sortie standard vers le fichier {\ttfamily message.\+txt} et l\textquotesingle{}opérateur {\ttfamily \&} indique que la commande s’exécute en arrière-\/plan.
+
+Dans le code, chaque opérateur est géré via des fonctions spécifiques \+: {\ttfamily builtin\+\_\+redirect\+\_\+output} pour les opérateurs {\ttfamily $>$} et {\ttfamily $>$$>$}, {\ttfamily builtin\+\_\+redirect\+\_\+input} pour l\textquotesingle{}opérateur {\ttfamily $<$}, et {\ttfamily builtin\+\_\+heredoc\+\_\+input} pour l\textquotesingle{}opérateur {\ttfamily $<$$<$}.
+
+Les opérateurs de contrôle comme {\ttfamily \&} sont pris en compte dans le champ {\ttfamily background} de la structure {\ttfamily \mbox{\hyperlink{structcommand__t}{command\+\_\+t}}}.\hypertarget{md_report_autotoc_md18}{}\doxysection{Conclusion}\label{md_report_autotoc_md18}
+Océane \+: Ce projet était plutôt cool et fun à faire ! J\textquotesingle{}avais de l\textquotesingle{}appréhension au début car il fallait le faire en C et je ne suis pas très douée en systèmes. Le projet m\textquotesingle{}a pris plus de temps que prévu mais j\textquotesingle{}ai pu apprendre pas mal de choses.
+
+J\textquotesingle{}ai utilisé l\textquotesingle{}IA non pas pour coder mais pour qu\textquotesingle{}elle m\textquotesingle{}explique des choses, notamment sur les pointeurs et les adresses car malgré les cours de Julien Schnell et de Julien Haristoy je n\textquotesingle{}avais toujours pas compris comment cela fonctionnait.
+
+Je n\textquotesingle{}ai pas rencontré de seg fault (youpi) mais j\textquotesingle{}ai rencontré des core dumped (pas youpi). Au final, c\textquotesingle{}était juste moi qui oubliait d\textquotesingle{}include certains fichiers dans mon code.
+
+Preuve \+:
+
+
+
+Conclusion \+:  

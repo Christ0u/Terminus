@@ -1,0 +1,101 @@
+Terminus is a minimal bash-\/style command interpreter implemented in C
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗██╗   ██╗███████╗}
+\DoxyCodeLine{╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║████╗  ██║██║   ██║██╔════╝}
+\DoxyCodeLine{   ██║   █████╗  ██████╔╝██╔████╔██║██║██╔██╗ ██║██║   ██║███████╗}
+\DoxyCodeLine{   ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║██║╚██╗██║██║   ██║╚════██║}
+\DoxyCodeLine{   ██║   ███████╗██║  ██║██║ ╚═╝ ██║██║██║ ╚████║╚██████╔╝███████║}
+\DoxyCodeLine{   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md3}{}\doxysection{Requirements}\label{md_README_autotoc_md3}
+
+\begin{DoxyItemize}
+\item Linux environment
+\item gcc 11.\+4 (or higher)
+\item GNU Make 4.\+3 (or higher)
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md4}{}\doxysection{Installation}\label{md_README_autotoc_md4}
+Clone this repository
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{git clone https://github.com/Christ0u/Terminus.git}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md5}{}\doxysection{Build}\label{md_README_autotoc_md5}
+Enter in the directory {\ttfamily /\+Terminus}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd ./Terminus}
+
+\end{DoxyCode}
+
+
+Compile the program
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{make}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md6}{}\doxysection{Configuration}\label{md_README_autotoc_md6}
+To be able to read the Terminus man page, you will need to copy the man file to a specific location on your system
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sudo cp ./doc/man\_Terminus.1 /usr/local/share/man/man1/Terminus.1}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md7}{}\doxysection{Usage}\label{md_README_autotoc_md7}
+Launch the interactive shell
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./bin/Terminus}
+
+\end{DoxyCode}
+
+
+Now, you have a minimal command interpreter
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{[ Terminus ] : /home/<user>/Documents/Sources/Terminus >}
+
+\end{DoxyCode}
+
+
+To find help about options and features, you can \+:
+
+
+\begin{DoxyItemize}
+\item use the Terminus man page
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{man Terminus}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyItemize}
+\item use the embedded help
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./bin/Terminus -\/-\/help}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md8}{}\doxysection{Authors}\label{md_README_autotoc_md8}
+
+\begin{DoxyItemize}
+\item Océanne DRUENNE (\href{https://github.com/odruenne}{\texttt{ odruenne}})
+\item Christopher GERARD (\href{https://github.com/Christ0u}{\texttt{ Christ0u}})
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md9}{}\doxysection{License}\label{md_README_autotoc_md9}
+\href{./LICENSE}{\texttt{ MIT}} 
